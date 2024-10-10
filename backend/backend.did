@@ -1,7 +1,3 @@
 service : {
-  getAge: () -> (nat) query;
-  getFullInfo: () -> (text) query;
-  getHobbies: () -> (vec text) query;
-  getName: () -> (text) query;
-  getOccupation: () -> (text) query;
+  getWhoAmI: () -> (text) query;
 }

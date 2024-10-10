@@ -34,8 +34,9 @@ button {
     border-radius: 5px;
 }
 
-#fullInfo {
+#principalId {
     margin-top: 20px;
     white-space: pre-line;
     text-align: left;
+    word-break: break-all;
 }

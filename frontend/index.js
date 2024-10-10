@@ -1,23 +1,38 @@
+import { AuthClient } from "@dfinity/auth-client";
 import { backend } from 'declarations/backend';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    const name = await backend.getName();
-    const age = await backend.getAge();
-    const occupation = await backend.getOccupation();
+let authClient;
 
-    document.getElementById('name').textContent = `Name: ${name}`;
-    document.getElementById('age').textContent = `Age: ${age}`;
-    document.getElementById('occupation').textContent = `Occupation: ${occupation}`;
-
-    document.getElementById('moreInfo').addEventListener('click', async () => {
-      const fullInfo = await backend.getFullInfo();
-      const fullInfoElement = document.getElementById('fullInfo');
-      fullInfoElement.textContent = fullInfo;
-      fullInfoElement.style.display = 'block';
-      document.getElementById('moreInfo').style.display = 'none';
-    });
-  } catch (error) {
-    console.error('Error fetching data:', error);
+const init = async () => {
+  authClient = await AuthClient.create();
+  if (await authClient.isAuthenticated()) {
+    handleAuthenticated();
   }
+};
+
+const handleAuthenticated = async () => {
+  document.getElementById('loginButton').style.display = 'none';
+  document.getElementById('whoAmI').style.display = 'block';
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await init();
+
+  document.getElementById('loginButton').addEventListener('click', async () => {
+    await authClient.login({
+      identityProvider: "https://identity.ic0.app/#authorize",
+      onSuccess: handleAuthenticated,
+    });
+  });
+
+  document.getElementById('whoAmI').addEventListener('click', async () => {
+    try {
+      const whoAmI = await backend.getWhoAmI();
+      const principalIdElement = document.getElementById('principalId');
+      principalIdElement.textContent = whoAmI;
+      principalIdElement.style.display = 'block';
+    } catch (error) {
+      console.error('Error fetching principal ID:', error);
+    }
+  });
 });
